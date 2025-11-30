@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tidal Site</title>
+    <style>
+        body { background: #312351; color: white; font-family: Arial; margin: 0; padding: 20px; }
+        .search-box { background: #5a3f7a; border-radius: 10px; padding: 10px; display: flex; align-items: center; }
+        #search { background: none; border: none; color: white; width: 200px; }
+        .player { background: #5a3f7a; border-radius: 10px; padding: 20px; margin-top: 20px; }
+        #now-playing { font-size: 18px; }
+        button { background: none; border: none; color: white; font-size: 20px; margin: 0 5px; }
+    </style>
+</head>
+<body>
+    <div class="search-box">
+        <input id="search" placeholder="Search any song">
+        <button onclick="searchTracks()">Search</button>
+    </div>
+    <div id="results"></div>
+    <div class="player">
+        <div id="now-playing">Not Playing</div>
+        <button onclick="prevTrack()">⏮</button>
+        <button id="play-pause" onclick="togglePlay()">▶</button>
+        <button onclick="nextTrack()">⏭</button>
+        <audio id="audio" controls style="display:none;"></audio>
+    </div>
+
+    <script>
+        const CLIENT_ID = 'YOUR_CLIENT_ID';
+        const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+        let accessToken = '';
+        let currentTrack = null;
+        let audio = document.getElementById('audio');
+
+        // Get token (simplified; use full OAuth flow)
+        async function getToken() {
+            const res = await fetch('https://auth.tidal.com/v1/oauth2/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
+            });
+            const data = await res.json();
+            accessToken = data.access_token;
+        }
+
+        async function searchTracks() {
+            await getToken();
+            const query = document.getElementById('search').value;
+            const res = await fetch(`https://api.tidal.com/v1/search?query=${query}&types=tracks&limit=10`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            const data = await res.json();
+            const results = document.getElementById('results');
+            results.innerHTML = data.results.tracks.items.map(track => 
+                `<div onclick="playTrack('${track.id}')">${track.title} - ${track.artist.name}</div>`
+            ).join('');
+        }
+
+        async function playTrack(id) {
+            const res = await fetch(`https://api.tidal.com/v1/tracks/${id}?include=items`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            currentTrack = await res.json();
+            // Get stream URL (requires full auth/user token for playback)
+            const streamRes = await fetch(`https://api.tidal.com/v1/tracks/${id}/urls?formats=ALAC`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            const urls = await streamRes.json();
+            audio.src = urls.urls[0].url; // Pick quality
+            audio.play();
+            document.getElementById('now-playing').textContent = currentTrack.title;
+            document.getElementById('play-pause').textContent = '⏸';
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                document.getElementById('play-pause').textContent = '⏸';
+            } else {
+                audio.pause();
+                document.getElementById('play-pause').textContent = '▶';
+            }
+        }
+
+        // Stub prev/next
+        function prevTrack() { /* Implement queue */ }
+        function nextTrack() { /* Implement queue */ }
+    </script>
+</body>
+</html>
