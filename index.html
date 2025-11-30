@@ -1,108 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Working Music Player</title>
-    <style>
-        body { font-family: sans-serif; background: #1e1e2e; color: white; display: flex; justify-content: center; padding: 20px; }
-        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; }
-        .card { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; }
-        input, select, button { padding: 12px; margin: 5px; border: none; border-radius: 10px; }
-        button { background: #764ba2; color: white; cursor: pointer; }
-        .results { max-height: 500px; overflow-y: auto; margin-top: 20px; }
-        .song { padding: 10px; background: rgba(255,255,255,0.1); margin: 5px 0; cursor: pointer; border-radius: 8px; }
-        .song:hover { background: rgba(255,255,255,0.2); }
-        audio { width: 100%; margin-top: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Legal Music Player</title>
+  <style>body{font-family:Arial;background:#111;color:#fff;text-align:center;padding:50px}</style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h2>Now Playing</h2>
-            <h3 id="title">Search something...</h3>
-            <audio id="audio" controls></audio>
-        </div>
-        <div class="card">
-            <h2>Search</h2>
-            <input type="text" id="query" placeholder="Song name" style="width:50%;">
-            <select id="engine">
-                <option value="gaama">Gaama</option>
-                <option value="seevn">Seevn</option>
-                <option value="hunjama">Hunjama</option>
-                <option value="mtmusic">MTMusic</option>
-                <option value="wunk">Wunk</option>
-            </select>
-            <button onclick="search()">Search</button>
-            <div class="results" id="results"></div>
-        </div>
-    </div>
+  <h1>Free Legal Music Search</h1>
+  <input type="text" id="query" placeholder="Search song" style="padding:10px;font-size:18px;width:300px">
+  <button onclick="search()" style="padding:10px 20px;font-size:18px">Search</button>
+  <div id="results"></div>
 
-    <script>
-        const API = 'https://musicapi.x007.workers.dev';
-
-        async function search() {
-            const query = document.getElementById('query').value.trim();
-            const engine = document.getElementById('engine').value;
-            if (!query) return;
-            document.getElementById('results').innerHTML = '<p>Searching...</p>';
-            try {
-                // Direct fetch (CORS ok); fallback proxy if blocked
-                let url = `${API}/search?q=${encodeURIComponent(query)}&searchEngine=${engine}`;
-                let res = await fetch(url);
-                if (!res.ok) {
-                    // Fallback proxy
-                    url = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-                    res = await fetch(url);
-                }
-                const data = await res.json();
-                if (data.status === 200 && data.response?.length > 0) {
-                    showResults(data.response);
-                } else {
-                    document.getElementById('results').innerHTML = '<p>No results. Try another engine/song.</p>';
-                }
-            } catch (e) {
-                document.getElementById('results').innerHTML = '<p>Error. Try again.</p>';
-                console.error(e);
-            }
-        }
-
-        function showResults(tracks) {
-            const div = document.getElementById('results');
-            div.innerHTML = '';
-            tracks.forEach(track => {
-                const item = document.createElement('div');
-                item.className = 'song';
-                item.innerHTML = `<strong>${track.title || 'Unknown'}</strong><br><small>${track.artist || ''}</small>`;
-                item.onclick = () => play(track.id, track.title, track.artist);
-                div.appendChild(item);
-            });
-        }
-
-        async function play(id, title, artist) {
-            document.getElementById('title').textContent = `${title} - ${artist || ''}`;
-            try {
-                let url = `${API}/fetch?id=${id}`;
-                let res = await fetch(url);
-                if (!res.ok) {
-                    url = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-                    res = await fetch(url);
-                }
-                const data = await res.json();
-                if (data.status === 200 && data.response) {
-                    document.getElementById('audio').src = data.response;
-                    document.getElementById('audio').play();
-                } else {
-                    alert('No stream available.');
-                }
-            } catch (e) {
-                alert('Load failed.');
-            }
-        }
-
-        document.getElementById('query').addEventListener('keypress', e => {
-            if (e.key === 'Enter') search();
-        });
-    </script>
+  <script>
+    async function search() {
+      const q = document.getElementById('query').value;
+      if (!q) return;
+      const res = await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=2c9a5b3f&format=jsonpretty&limit=20&search=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+      data.results.forEach(track => {
+        results.innerHTML += `
+          <div style="margin:20px;padding:20px;background:#222;border-radius:10px">
+            <h3>${track.name} - ${track.artist_name}</h3>
+            <audio controls src="${track.audio}"></audio><br>
+            <a href="${track.shareurl}" target="_blank">Open on Jamendo</a>
+          </div>`;
+      });
+    }
+  </script>
 </body>
 </html>
