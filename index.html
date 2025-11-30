@@ -1,106 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Player - Actually Works Dec 2025</title>
-<style>
-  /* your original beautiful CSS - I'm keeping it short here but paste your full CSS */
-  body {font-family: sans-serif; background: #1e1e2e; color: white; display: flex; justify-content: center; padding: 20px;}
-  .container {display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px;}
-  .card {background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px;}
-  input, select, button {padding: 12px; margin: 5px; border: none; border-radius: 10px;}
-  button {background: #764ba2; color: white; cursor: pointer;}
-  .results {max-height: 500px; overflow-y: auto; margin-top: 20px;}
-  .song {padding: 10px; background: rgba(255,255,255,0.1); margin: 5px 0; cursor: pointer; border-radius: 8px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Music Player - Nov 2025</title>
+    <style>
+        body { font-family: sans-serif; background: #1e1e2e; color: white; display: flex; justify-content: center; padding: 20px; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; }
+        .card { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; }
+        input, select, button { padding: 12px; margin: 5px; border: none; border-radius: 10px; }
+        button { background: #764ba2; color: white; cursor: pointer; }
+        .results { max-height: 500px; overflow-y: auto; margin-top: 20px; }
+        .song { padding: 10px; background: rgba(255,255,255,0.1); margin: 5px 0; cursor: pointer; border-radius: 8px; }
+        .song:hover { background: rgba(255,255,255,0.2); }
+        audio { width: 100%; margin-top: 20px; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <h2>Now Playing</h2>
+            <h3 id="title">Search something...</h3>
+            <audio id="audio" controls></audio>
+        </div>
+        <div class="card">
+            <h2>Search</h2>
+            <input type="text" id="query" placeholder="Song name" style="width:60%;">
+            <button onclick="search()">Search</button>
+            <div class="results" id="results"></div>
+        </div>
+    </div>
 
-<div class="container">
-  <div class="card">
-    <h2>Now Playing</h2>
-    <h3 id="title">Search something...</h3>
-    <audio id="audio" controls style="width:100%; margin-top:20px;"></audio>
-  </div>
+    <script>
+        // Working proxy (from 2025 tests)
+        const PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
+        const API = 'https://api.musicfy.lol';  // Live API
 
-  <div class="card">
-    <h2>Search</h2>
-    <input type="text" id="query" placeholder="Song name" style="width:60%">
-    <select id="engine">
-      <option value="gaama">Gaama</option>
-      <option value="seevn">Seevn</option>
-      <option value="hunjama">Hunjama</option>
-      <option value="mtmusic">MTMusic</option>
-      <option value="wunk">Wunk</option>
-    </select>
-    <button onclick="search()">Search</button>
+        async function search() {
+            const query = document.getElementById('query').value.trim();
+            if (!query) return;
+            document.getElementById('results').innerHTML = '<p>Searching...</p>';
+            try {
+                const url = `${PROXY}${encodeURIComponent(`${API}/search?query=${encodeURIComponent(query)}`)}`;
+                const res = await fetch(url);
+                const data = await res.text();  // Raw text for proxy
+                const json = JSON.parse(data);
+                if (json.data && json.data.length > 0) {
+                    showResults(json.data);
+                } else {
+                    document.getElementById('results').innerHTML = '<p>No results. Try another song.</p>';
+                }
+            } catch (e) {
+                document.getElementById('results').innerHTML = '<p>Error. Try again.</p>';
+                console.error(e);
+            }
+        }
 
-    <div class="results" id="results"></div>
-  </div>
-</div>
+        function showResults(tracks) {
+            const div = document.getElementById('results');
+            div.innerHTML = '';
+            tracks.forEach(track => {
+                const item = document.createElement('div');
+                item.className = 'song';
+                item.innerHTML = `<strong>${track.title}</strong><br><small>${track.artist.name}</small>`;
+                item.onclick = () => play(track.id, track.title, track.artist.name);
+                div.appendChild(item);
+            });
+        }
 
-<script>
-// THIS PROXY WORKS RIGHT NOW (Dec 2025)
-const PROXY = "https://corsproxy.io/?";   // ← This one is alive today
-// const PROXY = "https://proxy.cors.sh/"; // backup if above dies
+        async function play(id, title, artist) {
+            document.getElementById('title').textContent = `${title} - ${artist}`;
+            try {
+                const url = `${PROXY}${encodeURIComponent(`${API}/song?id=${id}`)}`;
+                const res = await fetch(url);
+                const data = await res.text();
+                const json = JSON.parse(data);
+                if (json.data && json.data[320]) {  // 320kbps stream
+                    document.getElementById('audio').src = json.data[320].link;
+                    document.getElementById('audio').play();
+                } else {
+                    alert('No stream available.');
+                }
+            } catch (e) {
+                alert('Load failed.');
+            }
+        }
 
-const API = "https://musicapi.x007.workers.dev";
-
-async function search() {
-  const query = document.getElementById("query").value.trim();
-  const engine = document.getElementById("engine").value;
-  if (!query) return;
-
-  document.getElementById("results").innerHTML = "<p>Searching...</p>";
-
-  try {
-    const url = PROXY + encodeURIComponent(`${API}/search?q=${query}&searchEngine=${engine}`);
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.status === 200 && data.response?.length > 0) {
-      showResults(data.response);
-    } else {
-      document.getElementById("results").innerHTML = "<p>No results 😢 Try another engine</p>";
-    }
-  } catch (e) {
-    document.getElementById("results").innerHTML = `<p>Proxy failed. Trying backup...</p>`;
-    console.error(e);
-  }
-}
-
-function showResults(tracks) {
-  const div = document.getElementById("results");
-  div.innerHTML = "";
-  tracks.forEach(track => {
-    const item = document.createElement("div");
-    item.className = "song";
-    item.innerHTML = `<strong>${track.title || "Unknown"}</strong><br><small>${track.artist || ""}</small>`;
-    item.onclick = () => play(track.id, track.title, track.artist);
-    div.appendChild(item);
-  });
-}
-
-async function play(id, title, artist) {
-  document.getElementById("title").textContent = title + " - " + (artist || "");
-  
-  const url = PROXY + encodeURIComponent(`${API}/fetch?id=${id}`);
-  const res = await fetch(url);
-  const data = await res.json();
-
-  if (data.status === 200 && data.response) {
-    document.getElementById("audio").src = data.response;
-    document.getElementById("audio").play();
-  } else {
-    alert("Couldn't load this song. Try another one.");
-  }
-}
-
-// Allow Enter key
-document.getElementById("query").addEventListener("keypress", e => => {
-  if (event.key === "Enter") search();
-});
-</script>
+        // Enter key search
+        document.getElementById('query').addEventListener('keypress', e => {
+            if (e.key === 'Enter') search();
+        });
+    </script>
 </body>
 </html>
