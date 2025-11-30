@@ -1,5 +1,5 @@
-const API_KEY = 'AIzaSyBMOMNiDI-ASbl61gv-fecfxETRTjOznxo'; // Replace with your YouTube Data API key
-const MAX_RESULTS = 20; // Show more results for a better experience
+const API_KEY = 'AIzaSyBMOMNiDI-ASbl61gv-fecfxETRTjOznxo'; // Replace with your API key
+const MAX_RESULTS = 20;
 
 async function searchVideos() {
     const query = document.getElementById('search').value.trim();
@@ -42,5 +42,5 @@ async function searchVideos() {
 function playVideo(videoId) {
     const player = document.getElementById('player');
     player.src = `https://www.youtube.com/embed/${videoId}`;
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll to top when a video is played
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
