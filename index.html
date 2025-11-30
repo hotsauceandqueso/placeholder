@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIDAL Music Player</title>
+    <title>Music Player</title>
     <style>
         * {
             margin: 0;
@@ -173,6 +173,22 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .engine-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 15px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .engine-select option {
+            background: #2d1b3d;
+            color: #fff;
+        }
+
         .search-btn {
             background: #764ba2;
             border: none;
@@ -260,15 +276,6 @@
             text-overflow: ellipsis;
         }
 
-        .badge {
-            background: rgba(118, 75, 162, 0.3);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            white-space: nowrap;
-        }
-
         .icon {
             width: 24px;
             height: 24px;
@@ -278,13 +285,6 @@
         .icon-large {
             width: 40px;
             height: 40px;
-        }
-
-        .tidal-logo {
-            text-align: center;
-            margin-top: 20px;
-            color: #aaa;
-            font-size: 12px;
         }
 
         @media (max-width: 768px) {
@@ -307,14 +307,14 @@
                 </svg>
             </div>
             <div class="status" id="status">---- Not Playing</div>
-            <div class="song-title" id="currentSong">Search TIDAL Music</div>
+            <div class="song-title" id="currentSong">Search for music</div>
             <div class="artist-name" id="currentArtist">Find your favorite tracks</div>
             <div class="progress-bar" id="progressBar">
                 <div class="progress" id="progress"></div>
             </div>
             <div class="time-display">
                 <span id="currentTime">0:00</span>
-                <span id="duration">0:30</span>
+                <span id="duration">0:00</span>
             </div>
             <div class="controls">
                 <button class="control-btn" onclick="toggleRepeat()" id="repeatBtn">
@@ -343,7 +343,6 @@
                     </svg>
                 </button>
             </div>
-            <div class="tidal-logo">Powered by TIDAL API</div>
         </div>
 
         <div class="search-card">
@@ -351,13 +350,19 @@
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="white"/>
                 </svg>
-                <input type="text" class="search-input" placeholder="Search tracks on TIDAL..." id="searchInput">
-                <button class="search-btn" onclick="searchTidal()">Search</button>
+                <input type="text" class="search-input" placeholder="Search any song" id="searchInput">
+                <select class="engine-select" id="engineSelect">
+                    <option value="gaama">Gaama</option>
+                    <option value="seevn">Seevn</option>
+                    <option value="hunjama">Hunjama</option>
+                    <option value="mtmusic">MTMusic</option>
+                    <option value="wunk">Wunk</option>
+                </select>
+                <button class="search-btn" onclick="searchMusic()">Search</button>
             </div>
             <div class="search-results" id="searchResults">
                 <div style="text-align: center; color: #aaa; padding: 40px;">
-                    <p style="font-size: 18px; margin-bottom: 10px;">🎵 TIDAL Music Search</p>
-                    <p style="font-size: 14px;">Search for any track and play 30-second previews</p>
+                    Enter a song name and click Search
                 </div>
             </div>
         </div>
@@ -366,13 +371,9 @@
     <audio id="audioPlayer"></audio>
 
     <script>
-        const CLIENT_ID = 'A6SaOZ02elkfgc8U';
-        const CLIENT_SECRET = '8N5QnYafLTvibJXczJ9cM3dKz1uL35fAf6vHQz5CCXs=';
-        const AUTH_URL = 'https://auth.tidal.com/v1/oauth2/token';
-        const API_BASE = 'https://openapi.tidal.com';
-        const COUNTRY_CODE = 'US';
+        const API_BASE = 'https://api.codetabs.com/v1/proxy?quest=';
+        const MUSIC_API = 'https://musicapi.x007.workers.dev';
         
-        let accessToken = null;
         let isPlaying = false;
         let isMuted = false;
         let isRepeat = false;
@@ -381,30 +382,6 @@
         let currentIndex = -1;
 
         const audioPlayer = document.getElementById('audioPlayer');
-
-        async function getAccessToken() {
-            if (accessToken) return accessToken;
-
-            try {
-                const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
-                const response = await fetch(AUTH_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Basic ${credentials}`,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'grant_type=client_credentials'
-                });
-
-                const data = await response.json();
-                accessToken = data.access_token;
-                console.log('Access token obtained');
-                return accessToken;
-            } catch (error) {
-                console.error('Failed to get access token:', error);
-                throw error;
-            }
-        }
 
         audioPlayer.addEventListener('timeupdate', () => {
             if (audioPlayer.duration) {
@@ -426,7 +403,7 @@
         audioPlayer.addEventListener('play', () => {
             isPlaying = true;
             updatePlayButton();
-            document.getElementById('status').textContent = '▶ Playing Preview';
+            document.getElementById('status').textContent = '▶ Playing';
         });
 
         audioPlayer.addEventListener('pause', () => {
@@ -444,73 +421,53 @@
 
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                searchTidal();
+                searchMusic();
             }
         });
 
-        async function searchTidal() {
+        async function searchMusic() {
             const query = document.getElementById('searchInput').value.trim();
+            const engine = document.getElementById('engineSelect').value;
             
             if (!query) {
-                alert('Please enter a search term');
+                alert('Please enter a song name');
                 return;
             }
 
             const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = '<div class="loading">Searching TIDAL...</div>';
+            resultsDiv.innerHTML = '<div class="loading">Searching...</div>';
 
             try {
-                const token = await getAccessToken();
+                const url = `${API_BASE}${encodeURIComponent(MUSIC_API + '/search?q=' + query + '&searchEngine=' + engine)}`;
+                console.log('Request URL:', url);
                 
-                const url = `${API_BASE}/search?query=${encodeURIComponent(query)}&countryCode=${COUNTRY_CODE}&limit=20&type=TRACKS`;
-                console.log('Requesting:', url);
-                
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.tidal.v1+json',
-                        'Content-Type': 'application/vnd.tidal.v1+json'
-                    }
-                });
-
+                const response = await fetch(url);
                 console.log('Response status:', response.status);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-
-                const data = await response.json();
-                console.log('TIDAL response:', data);
-
-                // Handle different response formats
-                let tracks = [];
                 
-                if (data.tracks && data.tracks.items) {
-                    tracks = data.tracks.items;
-                } else if (data.data && Array.isArray(data.data)) {
-                    tracks = data.data.filter(item => 
-                        (item.resource && item.resource.artifactType === 'track') || 
-                        item.artifactType === 'track'
-                    ).map(item => item.resource || item);
-                } else if (Array.isArray(data)) {
-                    tracks = data;
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
                 }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
 
-                if (tracks.length > 0) {
-                    searchResults = tracks;
+                if (data.status === 200 && data.response && data.response.length > 0) {
+                    searchResults = data.response;
                     displayResults(searchResults);
                 } else {
-                    resultsDiv.innerHTML = '<div class="error">No tracks found. Try a different search.</div>';
+                    resultsDiv.innerHTML = `
+                        <div class="error">
+                            <p>No results found.</p>
+                            <p style="font-size: 12px; margin-top: 10px;">Try a different search engine or song</p>
+                        </div>
+                    `;
                 }
             } catch (error) {
                 console.error('Search failed:', error);
                 resultsDiv.innerHTML = `
                     <div class="error">
-                        <p>Search failed</p>
+                        <p>Search failed. API might be down.</p>
                         <p style="font-size: 12px; margin-top: 10px;">Error: ${error.message}</p>
-                        <p style="font-size: 11px; margin-top: 5px;">Check console (F12) for details</p>
                     </div>
                 `;
             }
@@ -525,25 +482,14 @@
                 songItem.className = 'song-item';
                 songItem.onclick = () => playTrack(track, index);
 
-                // Handle different image formats
-                let imageUrl = '';
-                if (track.album && track.album.cover) {
-                    imageUrl = `https://resources.tidal.com/images/${track.album.cover.replace(/-/g, '/')}/640x640.jpg`;
-                } else if (track.imageCover && track.imageCover[0]) {
-                    imageUrl = `https://resources.tidal.com/images/${track.imageCover[0].url.replace(/-/g, '/')}/640x640.jpg`;
-                }
-
-                const artistName = track.artists ? track.artists.map(a => a.name).join(', ') : (track.artist ? track.artist.name : 'Unknown Artist');
-
                 songItem.innerHTML = `
                     <div class="song-thumbnail">
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${track.title}">` : ''}
+                        ${track.img ? `<img src="${track.img}" alt="${track.title}">` : ''}
                     </div>
                     <div class="song-info">
                         <div class="song-name">${track.title}</div>
-                        <div class="song-artist">${artistName}</div>
+                        <div class="song-artist">Click to play</div>
                     </div>
-                    <span class="badge">30s Preview</span>
                 `;
 
                 resultsDiv.appendChild(songItem);
@@ -556,64 +502,26 @@
 
             const resultsDiv = document.getElementById('searchResults');
             const originalContent = resultsDiv.innerHTML;
-            resultsDiv.innerHTML = '<div class="loading">Loading preview...</div>';
+            resultsDiv.innerHTML = '<div class="loading">Loading song...</div>';
 
             try {
-                const token = await getAccessToken();
-                const trackId = track.id;
-
-                const url = `${API_BASE}/tracks/${trackId}/playbackinfo?playbackmode=PREVIEW&assetpresentation=FULL&audioquality=LOW&countryCode=${COUNTRY_CODE}`;
-                console.log('Fetching playback info:', url);
-
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.tidal.v1+json',
-                        'Content-Type': 'application/vnd.tidal.v1+json'
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Playback error response:', errorText);
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
+                const url = `${API_BASE}${encodeURIComponent(MUSIC_API + '/fetch?id=' + track.id)}`;
+                console.log('Fetching song:', url);
+                
+                const response = await fetch(url);
                 const data = await response.json();
-                console.log('Playback data:', data);
+                console.log('Song data:', data);
 
-                let previewUrl = null;
-
-                // Try to extract preview URL from different formats
-                if (data.manifestMimeType === 'application/vnd.tidal.bts' && data.manifest) {
-                    const manifest = JSON.parse(atob(data.manifest));
-                    console.log('Manifest:', manifest);
-                    previewUrl = manifest.urls?.[0];
-                } else if (data.url) {
-                    previewUrl = data.url;
-                } else if (data.urls && data.urls.length > 0) {
-                    previewUrl = data.urls[0];
-                }
-
-                if (previewUrl) {
-                    // Update UI
+                if (data.status === 200 && data.response) {
                     document.getElementById('currentSong').textContent = track.title;
-                    const artistName = track.artists ? track.artists.map(a => a.name).join(', ') : (track.artist ? track.artist.name : 'Unknown Artist');
-                    document.getElementById('currentArtist').textContent = artistName;
+                    document.getElementById('currentArtist').textContent = 'Now Playing';
                     
                     const albumArt = document.getElementById('albumArt');
-                    let imageUrl = '';
-                    if (track.album && track.album.cover) {
-                        imageUrl = `https://resources.tidal.com/images/${track.album.cover.replace(/-/g, '/')}/640x640.jpg`;
-                    } else if (track.imageCover && track.imageCover[0]) {
-                        imageUrl = `https://resources.tidal.com/images/${track.imageCover[0].url.replace(/-/g, '/')}/640x640.jpg`;
-                    }
-                    
-                    if (imageUrl) {
-                        albumArt.innerHTML = `<img src="${imageUrl}" alt="${track.title}">`;
+                    if (track.img) {
+                        albumArt.innerHTML = `<img src="${track.img}" alt="${track.title}">`;
                     }
 
-                    audioPlayer.src = previewUrl;
+                    audioPlayer.src = data.response;
                     audioPlayer.play();
                     
                     document.getElementById('playBtn').disabled = false;
@@ -622,12 +530,12 @@
                     
                     resultsDiv.innerHTML = originalContent;
                 } else {
-                    throw new Error('No preview URL found in response');
+                    throw new Error('No playback URL');
                 }
             } catch (error) {
                 console.error('Playback error:', error);
                 resultsDiv.innerHTML = originalContent;
-                alert('Failed to load preview. This track may not have a preview available.');
+                alert('Failed to load song. Try another one.');
             }
         }
 
@@ -686,8 +594,6 @@
             const percent = (e.clientX - rect.left) / rect.width;
             audioPlayer.currentTime = percent * audioPlayer.duration;
         });
-
-        getAccessToken();
     </script>
 </body>
 </html>
