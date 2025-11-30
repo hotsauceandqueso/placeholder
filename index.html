@@ -208,6 +208,15 @@
             padding: 20px;
         }
 
+        .error ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .error li {
+            padding: 3px 0;
+        }
+
         .song-item {
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
@@ -348,8 +357,8 @@
         // Multiple API options - will try each one if others fail
         const API_OPTIONS = [
             'https://musicapi.x007.workers.dev',
-            'https://api.allorigins.win/raw?url=https://musicapi.x007.workers.dev',
-            'https://corsproxy.io/?https://musicapi.x007.workers.dev'
+            'https://corsproxy.io/?https://musicapi.x007.workers.dev',
+            'https://api.allorigins.win/raw?url=https://musicapi.x007.workers.dev'
         ];
         let currentAPIIndex = 0;
         
@@ -409,19 +418,57 @@
             const resultsDiv = document.getElementById('searchResults');
             resultsDiv.innerHTML = '<div class="loading">Searching...</div>';
 
-            try {
-                const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&searchEngine=${engine}`);
-                const data = await response.json();
+            // Try each API until one works
+            for (let i = 0; i < API_OPTIONS.length; i++) {
+                const apiBase = API_OPTIONS[i];
+                console.log(`Trying API ${i + 1}/${API_OPTIONS.length}: ${apiBase}`);
+                
+                try {
+                    const url = `${apiBase}/search?q=${encodeURIComponent(query)}&searchEngine=${engine}`;
+                    console.log('Request URL:', url);
+                    
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Response data:', data);
 
-                if (data.status === 200 && data.response && data.response.length > 0) {
-                    searchResults = data.response;
-                    displayResults(data.response);
-                } else {
-                    resultsDiv.innerHTML = '<div class="error">No results found. Try a different search engine or song name.</div>';
+                    if (data.status === 200 && data.response && data.response.length > 0) {
+                        searchResults = data.response;
+                        currentAPIIndex = i;
+                        displayResults(data.response);
+                        return;
+                    } else {
+                        console.log('No results in response');
+                        throw new Error('No results');
+                    }
+                } catch (error) {
+                    console.error(`API ${i + 1} failed:`, error);
+                    if (i === API_OPTIONS.length - 1) {
+                        resultsDiv.innerHTML = `
+                            <div class="error">
+                                <p>Search failed. All APIs are unavailable.</p>
+                                <p style="font-size: 12px; margin-top: 10px;">Try:</p>
+                                <ul style="font-size: 12px; text-align: left; margin-top: 5px;">
+                                    <li>• Different search terms</li>
+                                    <li>• Different search engine</li>
+                                    <li>• Refreshing the page</li>
+                                    <li>• Wait a few minutes</li>
+                                </ul>
+                            </div>
+                        `;
+                    }
                 }
-            } catch (error) {
-                console.error('Search error:', error);
-                resultsDiv.innerHTML = '<div class="error">Search failed. The API might be temporarily unavailable.</div>';
             }
         }
 
@@ -453,27 +500,36 @@
             const resultsDiv = document.getElementById('searchResults');
             resultsDiv.innerHTML = '<div class="loading">Loading song...</div>';
 
+            const apiBase = API_OPTIONS[currentAPIIndex];
+
             try {
-                const response = await fetch(`${API_BASE}/fetch?id=${songId}`);
+                const url = `${apiBase}/fetch?id=${songId}`;
+                console.log('Fetching song:', url);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+                
                 const data = await response.json();
+                console.log('Song data:', data);
 
                 if (data.status === 200 && data.response) {
                     currentSongData = searchResults[index];
                     
-                    // Update UI
                     document.getElementById('currentSong').textContent = currentSongData.title;
                     const albumArt = document.getElementById('albumArt');
                     if (currentSongData.img) {
                         albumArt.innerHTML = `<img src="${currentSongData.img}" alt="${currentSongData.title}">`;
                     }
 
-                    // Load and play audio
                     audioPlayer.src = data.response;
                     audioPlayer.play();
                     
                     document.getElementById('playBtn').disabled = false;
                     
-                    // Restore search results
                     displayResults(searchResults);
                 } else {
                     resultsDiv.innerHTML = '<div class="error">Failed to load song. Try another one.</div>';
@@ -531,7 +587,6 @@
             audioPlayer.loop = isRepeat;
         }
 
-        // Progress bar click
         document.getElementById('progressBar').addEventListener('click', (e) => {
             if (!audioPlayer.src) return;
             const rect = e.currentTarget.getBoundingClientRect();
