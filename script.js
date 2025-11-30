@@ -1,15 +1,16 @@
-const API_KEY = 'AIzaSyBMOMNiDI-ASbl61gv-fecfxETRTjOznxo'; // Replace with your API key from Google Cloud
+const API_KEY = 'AIzaSyBMOMNiDI-ASbl61gv-fecfxETRTjOznxo'; // Replace with your YouTube Data API key
+const MAX_RESULTS = 20; // Show more results for a better experience
 
 async function searchVideos() {
     const query = document.getElementById('search').value.trim();
     if (!query) return;
 
     const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = 'Searching...';
+    resultsDiv.innerHTML = '<p style="text-align:center">Searching...</p>';
 
     try {
         const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(query)}&key=${API_KEY}`
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(query)}&key=${API_KEY}`
         );
         const data = await response.json();
 
@@ -30,10 +31,10 @@ async function searchVideos() {
                 resultsDiv.appendChild(card);
             });
         } else {
-            resultsDiv.innerHTML = '<p>No results found.</p>';
+            resultsDiv.innerHTML = '<p style="text-align:center">No results found.</p>';
         }
     } catch (err) {
-        resultsDiv.innerHTML = '<p>Error fetching videos. Try again later.</p>';
+        resultsDiv.innerHTML = '<p style="text-align:center">Error fetching videos. Try again later.</p>';
         console.error(err);
     }
 }
@@ -41,4 +42,5 @@ async function searchVideos() {
 function playVideo(videoId) {
     const player = document.getElementById('player');
     player.src = `https://www.youtube.com/embed/${videoId}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll to top when a video is played
 }
