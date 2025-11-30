@@ -305,7 +305,7 @@
                         <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
                     </svg>
                 </button>
-                <button class="control-btn" onclick="previousSong()" disabled>
+                <button class="control-btn" onclick="previousSong()" disabled id="prevBtn">
                     <svg class="icon-large" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
                     </svg>
@@ -315,7 +315,7 @@
                         <path d="M8 5v14l11-7z"/>
                     </svg>
                 </button>
-                <button class="control-btn" onclick="nextSong()" disabled>
+                <button class="control-btn" onclick="nextSong()" disabled id="nextBtn">
                     <svg class="icon-large" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
                     </svg>
@@ -354,10 +354,8 @@
     <audio id="audioPlayer"></audio>
 
     <script>
-        // Use codetabs CORS proxy - it's reliable and free
         const API_BASE = 'https://api.codetabs.com/v1/proxy?quest=';
         const MUSIC_API = 'https://musicapi.x007.workers.dev';
-        let currentAPIIndex = 0;
         
         let isPlaying = false;
         let isMuted = false;
@@ -368,7 +366,6 @@
 
         const audioPlayer = document.getElementById('audioPlayer');
 
-        // Audio player event listeners
         audioPlayer.addEventListener('timeupdate', () => {
             if (audioPlayer.duration) {
                 const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
@@ -396,7 +393,6 @@
             document.getElementById('status').textContent = '⏸ Paused';
         });
 
-        // Search on Enter key
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 searchMusic();
@@ -500,25 +496,8 @@
                     audioPlayer.play();
                     
                     document.getElementById('playBtn').disabled = false;
-                    
-                    displayResults(searchResults);
-                } else {
-                    resultsDiv.innerHTML = '<div class="error">Failed to load song. Try another one.</div>';
-                }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                resultsDiv.innerHTML = '<div class="error">Failed to load song. Try another one.</div>';
-            }
-        }
-                    const albumArt = document.getElementById('albumArt');
-                    if (currentSongData.img) {
-                        albumArt.innerHTML = `<img src="${currentSongData.img}" alt="${currentSongData.title}">`;
-                    }
-
-                    audioPlayer.src = data.response;
-                    audioPlayer.play();
-                    
-                    document.getElementById('playBtn').disabled = false;
+                    document.getElementById('prevBtn').disabled = currentIndex === 0;
+                    document.getElementById('nextBtn').disabled = currentIndex === searchResults.length - 1;
                     
                     displayResults(searchResults);
                 } else {
