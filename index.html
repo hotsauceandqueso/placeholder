@@ -8,9 +8,11 @@
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
 		<style>
 			:root{
-				--bg-1: #0f172a; /* deep navy */
-				--bg-2: #0ea5e9; /* cyan */
-				--bg-3: #3b82f6; /* blue */
+				--bg-left: #020617;   /* very dark navy */
+				--bg-mid:  #071235;   /* deep indigo */
+				--bg-right:#042b59;   /* darker steel blue */
+				--accent-1:#0ea5e9;   /* cyan */
+				--accent-2:#3b82f6;   /* blue */
 			}
 
 			html,body{height:100%;}
@@ -21,9 +23,11 @@
 				-moz-osx-font-smoothing:grayscale;
 				display:grid;
 				place-items:center;
-				background: radial-gradient(1200px 600px at 10% 20%, rgba(59,130,246,0.14), transparent),
-										radial-gradient(1000px 500px at 90% 80%, rgba(14,165,233,0.12), transparent),
-										linear-gradient(135deg, var(--bg-1), #071235 30%, var(--bg-3) 60%, var(--bg-2) 100%);
+				/* darker left-to-right gradient + soft radial accents */
+				background:
+					radial-gradient(800px 400px at 12% 20%, rgba(59,130,246,0.06), transparent),
+					radial-gradient(900px 420px at 88% 80%, rgba(14,165,233,0.05), transparent),
+					linear-gradient(90deg, var(--bg-left), var(--bg-mid) 40%, var(--bg-right));
 				color: #fff;
 			}
 
@@ -38,52 +42,154 @@
 				width: calc(100% - 48px);
 			}
 
+			/* headline */
 			h1{
 				margin:0 0 .35em 0;
 				font-weight:900;
 				letter-spacing: -0.02em;
 				font-size: clamp(2.8rem, 12vw, 8rem);
 				line-height: .92;
-				color: #fff;
-				text-shadow: 0 6px 24px rgba(8,17,48,0.6), 0 1px 0 rgba(255,255,255,0.03);
+				text-shadow: 0 8px 28px rgba(2,6,23,0.8), 0 1px 0 rgba(255,255,255,0.03);
 				display:inline-block;
 				padding: .1em .35em;
-				background: linear-gradient(90deg, rgba(255,255,255,0.92), rgba(255,255,255,0.95));
+			}
+
+			/* split words to control gradient/solid colors */
+			h1 .word{
+				color: #ffffff; /* solid white for 'hotsauce' and 'queso' */
+				background: none;
+				-webkit-background-clip: unset;
+				background-clip: unset;
+			}
+
+			h1 .connector{
+				display:inline-block;
+				margin:0 .22em;
 				color: transparent;
+				background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95));
 				-webkit-background-clip: text;
 				background-clip: text;
 			}
 
-			p.lead{
-				margin:0;
-				margin-top:.6rem;
-				color: rgba(255,255,255,0.9);
-				font-weight:400;
-				font-size: clamp(.9rem, 1.8vw, 1.25rem);
-				opacity:.9;
-			}
-
-			/* Small accent line */
-			.accent{
-				height: 6px;
-				width: 90px;
-				margin: 24px auto 18px;
-				border-radius: 999px;
-				background: linear-gradient(90deg, #60a5fa, #06b6d4);
-				box-shadow: 0 4px 18px rgba(8,17,48,0.45);
-			}
+			/* subtitle removed (user requested) — keep an unobtrusive card style */
 
 			@media (max-width:520px){
 				.card{ padding: 2rem; }
 			}
+			.particles-canvas{
+				position:fixed;
+				inset:0;
+				width:100%;
+				height:100%;
+				z-index:0; /* behind the content */
+				pointer-events:none;
+			}
+
+			/* place content above the canvas */
+			main.card{ position:relative; z-index:1; }
+
 		</style>
 	</head>
 	<body>
+		<canvas class="particles-canvas" id="particles" aria-hidden="true"></canvas>
+
 		<main class="card" role="main" aria-label="About hotsauceandqueso">
-			<div class="accent" aria-hidden="true"></div>
-			<h1>hotsauceandqueso</h1>
-			<p class="lead">A small corner of the internet. I like good spice, good queso, and clean design.</p>
+			<h1>
+				<span class="word">hotsauce</span>
+				<span class="connector">and</span>
+				<span class="word">queso</span>
+			</h1>
 		</main>
+
+		<script>
+			// Simple particle animation for the canvas background
+			(function () {
+				const canvas = document.getElementById('particles');
+				if (!canvas) return;
+				const ctx = canvas.getContext('2d');
+
+				let dpr = Math.max(1, window.devicePixelRatio || 1);
+
+				function resize() {
+					dpr = Math.max(1, window.devicePixelRatio || 1);
+					canvas.width = Math.floor(canvas.clientWidth * dpr);
+					canvas.height = Math.floor(canvas.clientHeight * dpr);
+					ctx.scale(dpr, dpr);
+				}
+
+				const particles = [];
+				const NUM = 60;
+
+				function rand(min, max) { return Math.random() * (max - min) + min; }
+
+				function init() {
+					particles.length = 0;
+					for (let i = 0; i < NUM; i++) {
+						particles.push({
+							x: rand(0, canvas.clientWidth),
+							y: rand(0, canvas.clientHeight),
+							r: rand(0.6, 3.2),
+							vx: rand(-0.25, 0.25),
+							vy: rand(-0.06, 0.06),
+							alpha: rand(0.12, 0.6),
+						});
+					}
+				}
+
+				function draw() {
+					ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+					for (const p of particles) {
+						p.x += p.vx;
+						p.y += p.vy;
+
+						if (p.x < -10) p.x = canvas.clientWidth + 10;
+						if (p.x > canvas.clientWidth + 10) p.x = -10;
+						if (p.y < -40) p.y = canvas.clientHeight + 40;
+						if (p.y > canvas.clientHeight + 40) p.y = -40;
+
+						ctx.beginPath();
+						ctx.fillStyle = `rgba(255,255,255,${p.alpha * 0.95})`;
+						ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+						ctx.fill();
+					}
+
+					// subtle connections for nearby particles
+					for (let i = 0; i < particles.length; i++) {
+						for (let j = i + 1; j < particles.length; j++) {
+							const a = particles[i];
+							const b = particles[j];
+							const dx = a.x - b.x;
+							const dy = a.y - b.y;
+							const d = Math.hypot(dx, dy);
+							if (d < 88) {
+								const alpha = (0.09 * (1 - d / 88)) * Math.min(a.alpha, b.alpha);
+								ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+								ctx.lineWidth = 1 * (1 - d / 88);
+								ctx.beginPath();
+								ctx.moveTo(a.x, a.y);
+								ctx.lineTo(b.x, b.y);
+								ctx.stroke();
+							}
+						}
+					}
+
+					requestAnimationFrame(draw);
+				}
+
+				// wait for layout so clientWidth/clientHeight are available
+				window.addEventListener('load', () => {
+					resize();
+					init();
+					requestAnimationFrame(draw);
+				});
+
+				window.addEventListener('resize', () => {
+					// on resize, reinitialize particles using new size
+					resize();
+					init();
+				});
+			})();
+		</script>
 	</body>
 </html>
 
