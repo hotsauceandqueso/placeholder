@@ -24,37 +24,3 @@ function updateTime() {
 }
 setInterval(updateTime, 1000);
 updateTime();
-
-// -------- WEATHER --------
-async function updateWeather() {
-    if (!navigator.geolocation) {
-        document.getElementById("weather").textContent = "Weather: N/A";
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        // Using free MET.no weather API (no key needed!)
-        const url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`;
-
-        try {
-            const response = await fetch(url, {
-                headers: { "User-Agent": "MercuryWebsite/1.0" }
-            });
-            const data = await response.json();
-
-            const temp = Math.round(
-                data.properties.timeseries[0].data.instant.details.air_temperature
-            );
-
-            document.getElementById("weather").textContent =
-                `Weather: ${temp}°C`;
-        } catch {
-            document.getElementById("weather").textContent = "Weather: N/A";
-        }
-    });
-}
-updateWeather();
-setInterval(updateWeather, 5 * 60 * 1000); // Update every 5 min
