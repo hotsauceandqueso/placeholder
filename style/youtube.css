@@ -1,11 +1,25 @@
-body, html {
+/* Reset and basic styling */
+html, body {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: #fff;
+    height: 100%;
+    overflow-x: hidden;
 }
 
+/* Particle canvas */
+#particle-canvas {
+    position: fixed;      /* stay fixed behind content */
+    top: 0;
+    left: 0;
+    width: 100vw;         /* full viewport width */
+    height: 100vh;        /* full viewport height */
+    z-index: -1;          /* behind all other content */
+}
+
+/* Header */
 header {
     text-align: center;
     padding: 30px 20px 15px 20px;
@@ -32,12 +46,16 @@ header h1 {
     background-color: rgba(255,255,255,0.2);
 }
 
+/* Main content */
 main {
     max-width: 1200px;
     margin: 20px auto;
     padding: 0 15px;
+    position: relative; /* ensure content stays above canvas */
+    z-index: 1;
 }
 
+/* Search bar */
 .search-container {
     display: flex;
     justify-content: center;
@@ -70,19 +88,25 @@ main {
     background-color: #e60000;
 }
 
+/* YouTube player */
 .player-container {
     margin: 20px auto;
     max-width: 100%;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 1;
 }
 
+/* Search results */
 .results {
     margin-top: 25px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .video-card {
@@ -113,9 +137,12 @@ main {
     line-height: 1.2;
 }
 
+/* Footer */
 footer {
     text-align: center;
     margin: 40px 0 20px 0;
     color: #aaa;
     font-size: 14px;
+    position: relative;
+    z-index: 1;
 }
