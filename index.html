@@ -1,75 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" href="favicon.ico">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mercury</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="style/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-#info-bar {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    border-radius: 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-    opacity: 0;
-    animation: fadeIn 1s forwards;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mercury</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & body */
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex; /* flex layout to include sidebar */
+    }
 
-/* Make Mercury title larger with white glow */
-header h1 {
-    font-size: 6rem; /* larger title */
-    color: #fff;
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff; /* white glow */
-    margin: 0;
-}
+    /* Particle canvas */
+    canvas#particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
 
-@keyframes fadeIn { to { opacity: 1; } }
-</style>
+    /* Sidebar */
+    .sidebar {
+      width: 10%;
+      min-width: 120px;
+      height: 100%;
+      background: rgba(10, 30, 60, 0.85); /* dark blue translucent */
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 2;
+    }
+
+    .sidebar button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 15px 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .sidebar button:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateX(5px);
+    }
+
+    /* Main content area */
+    main {
+      margin-left: 10%; /* leave space for sidebar */
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 50px 20px 20px 20px;
+      box-sizing: border-box;
+    }
+
+    /* Header */
+    header h1 {
+      font-size: 6rem;
+      color: #fff;
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+      margin: 0;
+    }
+
+    /* Button grid for hub links */
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 50px;
+    }
+
+    .hub-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+      background-color: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1.2rem;
+      text-decoration: none;
+      border-radius: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      text-align: center;
+    }
+
+    .hub-button:hover {
+      background-color: rgba(255,255,255,0.2);
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #aaa;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Info bar at bottom */
+    #info-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 45px;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      color: white;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
-<canvas id="particle-canvas"></canvas>
+  <canvas id="particle-canvas"></canvas>
 
-<header>
-    <h1>Mercury</h1>
-</header>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <button>Home</button>
+    <button>YouTube Watcher</button>
+    <button>Page 3</button>
+    <button>Page 4</button>
+    <button>Page 5</button>
+  </div>
 
-<main>
+  <!-- Main content -->
+  <main>
+    <header>
+      <h1>Mercury</h1>
+    </header>
+
     <div class="button-grid">
-        <a href="pages/youtube.html" class="hub-button">Mercury YouTube Watcher</a>
+      <a href="pages/youtube.html" class="hub-button">Mercury YouTube Watcher</a>
     </div>
-</main>
 
-<footer>
-    <p>© 2025 Mercury. All rights reserved.</p>
-</footer>
+    <footer>
+      <p>© 2025 Mercury. All rights reserved.</p>
+    </footer>
+  </main>
 
-<script src="particles.js"></script>
-<script src="homepage.js"></script>
-<script src="js/particles.js"></script>
-<script src="js/homepage.js"></script>
-
-<div id="info-bar">
+  <!-- Info bar -->
+  <div id="info-bar">
     <span id="battery"></span>
     <span id="time"></span>
-</div>
+  </div>
 
-<script src="infobar.js"></script>
-<script src="js/infobar.js"></script>
+  <script src="particles.js"></script>
+  <script src="homepage.js"></script>
+  <script src="js/infobar.js"></script>
 </body>
 </html>
