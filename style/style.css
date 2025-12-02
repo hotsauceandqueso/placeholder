@@ -1,110 +1,29 @@
-/* Reset & fonts */
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    height: 100%;
-    overflow: hidden;
-    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    color: #fff;
-    position: relative;
+/* Mercury title glow and floating letters */
+#mercury-title {
+    font-size: 6rem;
+    font-weight: 900;
+    color: #00aaff;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #00aaff, 0 0 40px #00aaff, 0 0 60px #00aaff;
+    display: inline-block;
 }
 
-canvas#particle-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+#mercury-title span {
+    display: inline-block;
+    animation: float 2s ease-in-out infinite;
 }
 
-header {
-    text-align: center;
-    padding: 50px 20px 30px 20px;
-    position: relative;
-    z-index: 1;
-}
+/* Randomize animation delays for each letter */
+#mercury-title span:nth-child(1) { animation-delay: 0s; }
+#mercury-title span:nth-child(2) { animation-delay: 0.1s; }
+#mercury-title span:nth-child(3) { animation-delay: 0.2s; }
+#mercury-title span:nth-child(4) { animation-delay: 0.3s; }
+#mercury-title span:nth-child(5) { animation-delay: 0.4s; }
+#mercury-title span:nth-child(6) { animation-delay: 0.5s; }
+#mercury-title span:nth-child(7) { animation-delay: 0.6s; }
 
-header h1 {
-    font-size: 3rem;
-    margin: 0;
-}
-
-header p {
-    font-size: 1.2rem;
-    color: #ccc;
-    margin-top: 10px;
-}
-
-main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    height: calc(100% - 180px); /* leave space for header/footer */
-}
-
-.button-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
-    width: 90%;
-    max-width: 1000px;
-}
-
-.hub-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 25px;
-    background-color: rgba(255,255,255,0.1);
-    color: #fff;
-    font-size: 1.2rem;
-    text-decoration: none;
-    border-radius: 15px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    backdrop-filter: blur(5px);
-    text-align: center;
-}
-
-.hub-button:hover {
-    background-color: rgba(255,255,255,0.2);
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    color: #aaa;
-    font-size: 0.9rem;
-    position: relative;
-    z-index: 1;
-}
-
-#info-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 45px;
-
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.08);
-
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    color: white;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    z-index: 9999;
+/* Float animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
 }
