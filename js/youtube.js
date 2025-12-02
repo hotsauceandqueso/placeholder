@@ -42,7 +42,11 @@ async function searchVideos() {
 
 function playVideo(videoId) {
     const player = document.getElementById('player');
-    // NO-COOKIE embed
     player.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Trigger search on Enter key
+document.getElementById('search').addEventListener('keydown', function(e) {
+    if(e.key === 'Enter') searchVideos();
+});
