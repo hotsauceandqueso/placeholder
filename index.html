@@ -1,48 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mercury</title>
-  <link rel="icon" href="favicon.ico">
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercury</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+#info-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+/* Make Mercury title larger with white glow */
+header h1 {
+    font-size: 6rem; /* larger title */
+    color: #fff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff; /* white glow */
+    margin: 0;
+}
+
+@keyframes fadeIn { to { opacity: 1; } }
+</style>
 </head>
 <body>
-  <canvas id="particle-canvas"></canvas>
+<canvas id="particle-canvas"></canvas>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <button>Home</button>
-    <button>YouTube Watcher</button>
-    <button>Page 3</button>
-    <button>Page 4</button>
-    <button>Page 5</button>
-  </div>
+<header>
+    <h1>Mercury</h1>
+</header>
 
-  <!-- Main content -->
-  <main>
-    <header>
-      <h1>Mercury</h1>
-    </header>
-
+<main>
     <div class="button-grid">
-      <a href="pages/youtube.html" class="hub-button">Mercury YouTube Watcher</a>
+        <a href="pages/youtube.html" class="hub-button">Mercury YouTube Watcher</a>
     </div>
+</main>
 
-    <footer>
-      <p>© 2025 Mercury. All rights reserved.</p>
-    </footer>
-  </main>
+<footer>
+    <p>© 2025 Mercury. All rights reserved.</p>
+</footer>
 
-  <!-- Info bar -->
-  <div id="info-bar">
+<script src="particles.js"></script>
+<script src="homepage.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/homepage.js"></script>
+
+<div id="info-bar">
     <span id="battery"></span>
     <span id="time"></span>
-  </div>
+</div>
 
-  <script src="particles.js"></script>
-  <script src="homepage.js"></script>
-  <script src="js/infobar.js"></script>
+<script src="infobar.js"></script>
+<script src="js/infobar.js"></script>
 </body>
 </html>
