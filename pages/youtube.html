@@ -1,161 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mercury YouTube Watcher</title>
-<link rel="stylesheet" href="../style/youtube.css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-/* Header */
-header {
-    text-align: center;
-    padding: 40px 20px 20px 20px;
-    position: relative;
-    z-index: 1;
-}
-
-header h1 {
-    font-size: 3rem;
-    color: #fff;
-    margin: 0;
-}
-
-/* Centered search bar */
-.search-container {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0 40px 0;
-}
-
-.search-container input {
-    flex: 1;
-    max-width: 600px;
-    padding: 14px 20px;
-    font-size: 16px;
-    border-radius: 30px 0 0 30px;
-    border: 2px solid #007BFF;
-    outline: none;
-    background-color: rgba(0, 123, 255, 0.1);
-    color: #fff;
-    transition: 0.3s;
-}
-
-.search-container input::placeholder {
-    color: rgba(255,255,255,0.7);
-}
-
-.search-container input:focus {
-    background-color: rgba(0, 123, 255, 0.2);
-    border-color: #0056b3;
-}
-
-.search-container button {
-    padding: 14px 25px;
-    font-size: 16px;
-    background: linear-gradient(45deg, #007BFF, #0056b3);
-    border: none;
-    border-radius: 0 30px 30px 0;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.search-container button:hover {
-    background: linear-gradient(45deg, #0056b3, #003f7f);
-    transform: scale(1.05);
-}
-
-/* Player container - initially hidden */
-.player-container {
-    width: 95%;
-    max-width: 1400px;
-    margin: 30px auto;
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    display: none; /* hidden initially */
-}
-
-.player-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
-
-/* Video results grid - 5 per row */
-.results {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    width: 95%;
-    max-width: 1400px;
-    margin: 30px auto 60px auto;
-}
-
-.video-card {
-    background-color: rgba(0,0,0,0.3);
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.video-card img {
-    width: 100%;
-    display: block;
-}
-
-.video-card p {
-    margin: 8px;
-    font-size: 0.9rem;
-    text-align: center;
-    color: #fff;
-}
-
-.video-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mercury YouTube Watcher</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-<body>  
+<body>
+  <canvas id="particle-canvas"></canvas>
 
-<canvas id="particle-canvas"></canvas>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <button>Home</button>
+    <button>YouTube Watcher</button>
+    <button>Page 3</button>
+    <button>Page 4</button>
+    <button>Page 5</button>
+  </div>
 
-<header>
-    <h1>Mercury YouTube Watcher</h1>
-</header>
+  <!-- Main content -->
+  <main>
+    <header>
+      <h1>Mercury YouTube Watcher</h1>
+    </header>
 
-<main>
     <div class="search-container">
-        <input id="search" type="text" placeholder="Search YouTube...">
-        <button onclick="searchVideos()">Search</button>
+      <input id="search" type="text" placeholder="Search YouTube...">
+      <button onclick="searchVideos()">Search</button>
     </div>
 
     <div class="player-container">
-        <iframe id="player" 
-            title="YouTube video player" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-        </iframe>
+      <iframe id="player" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
     <div id="results" class="results"></div>
-</main>
 
-<footer>
-    <p>Powered by YouTube Data API v3</p>
-</footer>
+    <footer>
+      <p>Powered by YouTube Data API v3</p>
+    </footer>
+  </main>
 
-<script src="../js/homepage.js"></script>
-<script src="../js/youtube.js"></script>
+  <!-- Info bar -->
+  <div id="info-bar">
+    <span id="battery"></span>
+    <span id="time"></span>
+  </div>
+
+  <script src="../js/homepage.js"></script>
+  <script src="../js/youtube.js"></script>
+  <script src="../js/infobar.js"></script>
 </body>
 </html>
