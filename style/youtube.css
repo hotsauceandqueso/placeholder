@@ -11,10 +11,30 @@ body {
     min-height: 100vh;
 }
 
-/* Search bar - modern blue style */
+/* Particle canvas */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-top: 30px;
+}
+
+header h1 {
+    font-size: 2.2rem;
+}
+
+/* Search bar - slightly darker blue */
 .search-container {
     display: flex;
-    margin: 40px 0 20px 0;
+    margin: 30px 0;
 }
 
 .search-container input {
@@ -23,9 +43,9 @@ body {
     padding: 14px 20px;
     font-size: 16px;
     border-radius: 30px 0 0 30px;
-    border: 2px solid #007BFF; /* blue border */
+    border: 2px solid #0062cc; /* slightly darker blue border */
     outline: none;
-    background-color: rgba(0, 123, 255, 0.1); /* light transparent blue */
+    background-color: rgba(0, 98, 204, 0.2); /* slightly darker transparent blue */
     color: #fff;
     transition: 0.3s;
 }
@@ -35,14 +55,14 @@ body {
 }
 
 .search-container input:focus {
-    background-color: rgba(0, 123, 255, 0.2);
-    border-color: #0056b3; /* darker blue on focus */
+    background-color: rgba(0, 98, 204, 0.3);
+    border-color: #004a99; /* darker on focus */
 }
 
 .search-container button {
     padding: 14px 25px;
     font-size: 16px;
-    background: linear-gradient(45deg, #007BFF, #0056b3); /* blue gradient */
+    background: linear-gradient(45deg, #0062cc, #004a99); /* darker gradient */
     border: none;
     border-radius: 0 30px 30px 0;
     color: #fff;
@@ -52,13 +72,28 @@ body {
 }
 
 .search-container button:hover {
-    background: linear-gradient(45deg, #0056b3, #003f7f); /* darker on hover */
+    background: linear-gradient(45deg, #004a99, #003366);
     transform: scale(1.05);
 }
 
-/* Video container */
-.video-container {
-    display: flex;
-    justify-content: center;
+/* Player container */
+.player-container {
+    width: 90%;
+    max-width: 900px;
     margin-bottom: 50px;
+}
+
+/* Results styling */
+.results {
+    width: 90%;
+    max-width: 900px;
+    margin-bottom: 50px;
+}
+
+/* Footer */
+footer {
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
 }
