@@ -3,27 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games - Mercury</title>
+    <title>Mercury Games</title>
 
-    <!-- Styles -->
+    <!-- Same styling as homepage -->
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../style/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        /* Larger glowing header */
+        header h1 {
+            text-align: center;
+            color: white;
+            font-size: 5rem;
+            margin-top: 40px;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+            font-weight: 700;
+        }
+
+        /* Grid for 5 per row */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px;
             padding: 40px;
-            max-width: 900px;
+            max-width: 1400px;
             margin: auto;
         }
 
+        /* Button style */
         .game-button {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(8px);
-            padding: 20px;
+            padding: 25px;
             border-radius: 20px;
             display: flex;
             flex-direction: column;
@@ -31,31 +43,27 @@
             justify-content: center;
             color: white;
             text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.25);
             transition: 0.25s ease;
-            border: 1px solid rgba(255,255,255,0.2);
         }
 
+        /* Larger icons */
         .game-button img {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 10px;
+            width: 90px;
+            height: 90px;
+            margin-bottom: 12px;
         }
 
+        /* Hover effect */
         .game-button:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.18);
-        }
-
-        header h1 {
-            text-align: center;
-            margin-top: 40px;
-            color: white;
+            transform: translateY(-6px);
+            background: rgba(255,255,255,0.18);
         }
 
         footer {
             text-align: center;
             color: white;
-            margin-bottom: 30px;
+            margin: 40px 0;
         }
     </style>
 </head>
@@ -65,29 +73,174 @@
 <canvas id="particle-canvas"></canvas>
 
 <header>
-    <h1>Games</h1>
+    <h1>Mercury Games</h1>
 </header>
 
 <main>
     <div class="games-grid">
+        
+        <!-- 30 placeholder buttons -->
+        <!-- You can replace the icon and link later -->
 
-        <!-- Example game buttons -->
-        <a href="baldisbasics.html?id=1" class="game-button">
-            <img src="../assets/baldisbasics.png" alt="Game 1">
+        <!-- Use placeholder icon if needed -->
+        <!-- Replace ../assets/icons/placeholder.png with your actual icon -->
+
+        <!-- Generate 30 buttons -->
+        <!-- BUTTONS 1–30 -->
+        <!-- You can rename and change links later -->
+
+        <!-- Loop manually since HTML can't loop -->
+        <!-- BUTTON 1 -->
+        <a href="game1.html?id=1" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
             <span>Game 1</span>
         </a>
 
-        <a href="drivemad.html?id=2" class="game-button">
-            <img src="../assets/drivemad.png" alt="Game 2">
+        <a href="game2.html?id=2" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
             <span>Game 2</span>
         </a>
 
-        <a href="2048.html?id=3" class="game-button">
-            <img src="../assets/2048.png" alt="Game 3">
+        <a href="game3.html?id=3" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
             <span>Game 3</span>
         </a>
 
-        <!-- Add more by copy+paste -->
+        <a href="game4.html?id=4" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 4</span>
+        </a>
+
+        <a href="game5.html?id=5" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 5</span>
+        </a>
+
+        <a href="game6.html?id=6" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 6</span>
+        </a>
+
+        <a href="game7.html?id=7" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 7</span>
+        </a>
+
+        <a href="game8.html?id=8" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 8</span>
+        </a>
+
+        <a href="game9.html?id=9" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 9</span>
+        </a>
+
+        <a href="game10.html?id=10" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 10</span>
+        </a>
+
+        <a href="game11.html?id=11" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 11</span>
+        </a>
+
+        <a href="game12.html?id=12" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 12</span>
+        </a>
+
+        <a href="game13.html?id=13" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 13</span>
+        </a>
+
+        <a href="game14.html?id=14" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 14</span>
+        </a>
+
+        <a href="game15.html?id=15" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 15</span>
+        </a>
+
+        <a href="game16.html?id=16" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 16</span>
+        </a>
+
+        <a href="game17.html?id=17" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 17</span>
+        </a>
+
+        <a href="game18.html?id=18" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 18</span>
+        </a>
+
+        <a href="game19.html?id=19" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 19</span>
+        </a>
+
+        <a href="game20.html?id=20" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 20</span>
+        </a>
+
+        <a href="game21.html?id=21" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 21</span>
+        </a>
+
+        <a href="game22.html?id=22" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 22</span>
+        </a>
+
+        <a href="game23.html?id=23" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 23</span>
+        </a>
+
+        <a href="game24.html?id=24" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 24</span>
+        </a>
+
+        <a href="game25.html?id=25" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 25</span>
+        </a>
+
+        <a href="game26.html?id=26" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 26</span>
+        </a>
+
+        <a href="game27.html?id=27" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 27</span>
+        </a>
+
+        <a href="game28.html?id=28" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 28</span>
+        </a>
+
+        <a href="game29.html?id=29" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 29</span>
+        </a>
+
+        <a href="game30.html?id=30" class="game-button">
+            <img src="../assets/icons/placeholder.png" alt="Game">
+            <span>Game 30</span>
+        </a>
+
     </div>
 </main>
 
