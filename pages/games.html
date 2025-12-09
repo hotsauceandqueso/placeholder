@@ -89,7 +89,11 @@
 
 <div class="games-container">
     <div class="games-grid">
-        <!-- Buttons auto-generated below -->
+        <!-- First button for your actual game -->
+        <a href="../games/YouAreBezos/index.html" class="game-button" target="_blank">
+            <img src="../assets/icons/placeholder.png" alt="YouAreBezos Icon">
+            <span>You Are Bezos</span>
+        </a>
     </div>
 </div>
 
@@ -98,13 +102,14 @@
 </footer>
 
 <script>
-    // Generate 40 placeholder game buttons
+    // Generate remaining 39 placeholder buttons
     const grid = document.querySelector(".games-grid");
 
-    for (let i = 1; i <= 40; i++) {
+    // Start from i = 2 because first button is YouAreBezos
+    for (let i = 2; i <= 40; i++) {
         grid.innerHTML += `
             <a href="../games/game${i}.html" class="game-button">
-                <img src="../assets/icons/placeholder.png">
+                <img src="../assets/icons/placeholder.png" alt="Game ${i} Icon">
                 <span>Game ${i}</span>
             </a>
         `;
